@@ -9,21 +9,21 @@ import java.util.List;
 /**
  * Your implementation of MachineService.
  */
-public class MachineServiceImpl implements MachineService {
+public class MachineServiceImpl<T extends Machine> implements MachineService<T> {
     @Override
-    public List<? extends Machine> getAll(Class type) {
+    public List<T> getAll(Class<? extends Machine> type) {
         if (type == Bulldozer.class) {
-            return new BulldozerProducer().get();
+            return (List<T>) new BulldozerProducer().get();
         } else if (type == Excavator.class) {
-            return new ExcavatorProducer().get();
+            return (List<T>) new ExcavatorProducer().get();
         } else if (type == Truck.class) {
-            return new TruckProducer().get();
+            return (List<T>) new TruckProducer().get();
         }
         return List.of();
     }
 
     @Override
-    public void fill(List machines, Machine value) {
+    public void fill(List<? super T> machines, T value) {
         if (!machines.isEmpty()) {
             for (int i = 0; i < machines.size(); i++) {
                 machines.set(i, value);
@@ -32,10 +32,9 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
-    public void startWorking(List list) {
-        for (Object machine : list) {
-            Machine m = (Machine) machine;
-            m.doWork();
+    public void startWorking(List<? extends Machine> machines) {
+        for (Machine machine : machines) {
+            machine.doWork();
         }
     }
 }
